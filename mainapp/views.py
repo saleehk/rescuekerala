@@ -21,6 +21,7 @@ from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.http import Http404
 from rest_framework import viewsets, permissions, status
 from .serializers import RescueCampSerializer, PersonSerializer
+from rest_framework.response import Response
 
 class CreateRequest(CreateView):
     model = Request
@@ -405,9 +406,9 @@ class PersonViewSet(viewsets.ModelViewSet):
             camped_at = serializer.validated_data.get('camped_at', None)
 
             if camped_at :
-                camp = get_object_or_404(RescueCamp, id=camped_at, data_entry_user=self.request.user)
+                camp = get_object_or_404(RescueCamp, id=camped_at.id, data_entry_user=self.request.user)
                 serializer.save()
-                Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
 
             else:
                 return Response({'error' : 'Rescue Camp is required field.'}, status=status.HTTP_400_BAD_REQUEST)

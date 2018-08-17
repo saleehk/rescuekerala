@@ -19,6 +19,8 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.http import Http404
+from rest_framework import viewsets, permissions
+from .serializers import RescueCampSerializer
 
 class CreateRequest(CreateView):
     model = Request
@@ -378,11 +380,12 @@ def coordinator_home(request):
 class RescueCampViewSet(viewsets.ModelViewSet):
     queryset = RescueCamp.objects.filter()
     serializer_class = RescueCampSerializer
-    permission_classes = (permissions.IsAuthenticated)
-
+    permission_classes = (permissions.IsAuthenticated,)
+    http_method_names = ['get']
+    
     """
         This view should return a list of all the RescueCamp
         for the currently user.
     """
     def get_queryset(self):
-        return RescueCamp.objects.filter(user=self.request.user,).order_by('-id')
+        return RescueCamp.objects.filter(data_entry_user=self.request.user,).order_by('-id')

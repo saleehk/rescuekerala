@@ -14,6 +14,7 @@ import os
 import environ
 import dj_database_url
 import raven
+import datetime
 
 def get_list(text):
     return [item.strip() for item in text.split(',')]
@@ -66,6 +67,10 @@ INSTALLED_APPS = [
     'bootstrap3',
     'django_filters',
     'raven.contrib.django.raven_compat',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'rest_auth',
+    
 ]
 
 MIDDLEWARE = [
@@ -198,3 +203,9 @@ STATICFILES_DIRS = (
 )
 
 ADMIN_SITE_HEADER = "Keralarescue Dashboard"
+
+#JWT REST Auth
+REST_USE_JWT = True
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=20)
+}

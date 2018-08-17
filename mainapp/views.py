@@ -371,4 +371,18 @@ def coordinator_home(request):
 
     # Commented to allow all users to see all camps
     # .filter(data_entry_user=request.user)
-    return render(request, "mainapp/coordinator_home.html", {'filter': filter , 'camps' : relief_camps})
+    camps = RescueCamp.objects.filter(data_entry_user=request.user)
+    return render(request,"mainapp/coordinator_home.html",{'camps':camps})
+
+
+class RescueCampViewSet(viewsets.ModelViewSet):
+    queryset = RescueCamp.objects.filter()
+    serializer_class = RescueCampSerializer
+    permission_classes = (permissions.IsAuthenticated)
+
+    """
+        This view should return a list of all the RescueCamp
+        for the currently user.
+    """
+    def get_queryset(self):
+        return RescueCamp.objects.filter(user=self.request.user,).order_by('-id')

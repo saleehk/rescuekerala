@@ -6,6 +6,7 @@ from rest_framework import serializers
 from .models import RescueCamp, Person
 
 class RescueCampSerializer(serializers.ModelSerializer):
+    total_infants = serializers.IntegerField(default=None,required=False)
     class Meta:
         model = RescueCamp
         fields = '__all__'
@@ -37,7 +38,20 @@ class RescueCampViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return RescueCamp.objects.order_by('-id')
 
-
+    def update(self, request, *args, **kwargs):
+        obj = self.get_object()
+        obj.total_males = request.data.get('total_males') or None
+        obj.total_females = request.data.get('total_females') or None
+        obj.food_req = request.data.get('food_req') or None
+        obj.total_infants = request.data.get('total_infants') or None
+        obj.clothing_req = request.data.get('clothing_req') or None
+        obj.sanitary_req = request.data.get('sanitary_req', None)
+        obj.medical_req = request.data.get('medical_req', None)
+        obj.other_req = request.data.get('other_req', None)
+        
+        obj.save()
+        return Response({'status':'updated','message' : 'Camp updated'}, status=status.HTTP_200_OK)
+        
 class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.filter()
     serializer_class = PersonSerializer
